@@ -1,0 +1,29 @@
+{
+  "name": "mongodb-simple",
+  "version": "1.0.0",
+  "description": "Bare to the bone promise-based module for working with MongoDB suited for the simplest projects.",
+  "main": "mongodb-simple.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esoodev/mongodb-simple.git"
+  },
+  "keywords": [
+    "mongodb",
+    "simple",
+    "quick",
+    "easy"
+  ],
+  "author": "esoodev@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esoodev/mongodb-simple/issues"
+  },
+  "homepage": "https://github.com/esoodev/mongodb-simple#readme",
+  "dependencies": {
+    "assert": "^1.4.1",
+    "mongodb": "^2.2.31"
+  }
+}
