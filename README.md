@@ -70,7 +70,22 @@ var users = [{name: "Nathan Lee", age: 25}, {name: "Yuqing Zhu", age: 21}]
 
 mongosi.insertDocuments(connection, 'users', users)
 .then((result) => {
-    // returns the inserted documents on success
+    // returns the result JSON on success
+    console.log(result)
+}, (error) => {
+    console.log(error)
+})
+```
+
+### Delete documents in a collection by IDs.
+```
+var mongosi = require('mongodb-simple')
+
+mongosi.deleteDocumentsByIds(connection, 'items', [
+    '59e02452ebc0afc01a54d13f', '59e0245a155c81932bf3a20f'
+    ])
+.then((result) => {
+    // returns the result JSON on success
     console.log(result)
 }, (error) => {
     console.log(error)
@@ -111,4 +126,9 @@ mongosi.removeUser(connection, 'nathan')
 ###1.1.0
 Added authentication. Additional functionalities.
 Now uses connection string.
+###1.1.1
+Added deleting documents in a collection by IDs.
+insertDocuments() now returns result JSON instead of inserted documents.
+
+
 
