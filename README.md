@@ -129,6 +129,9 @@ Now uses connection string.
 ###1.1.1
 Added deleting documents in a collection by IDs.
 insertDocuments() now returns result JSON instead of inserted documents.
+###1.1.2
+Fixed collection dropping; dropCollection() works properly. 
+Connection now properly closes on promise rejection.
 
 
 

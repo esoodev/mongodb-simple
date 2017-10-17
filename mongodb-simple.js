@@ -19,6 +19,7 @@ module.exports = {
                 collection.find(search).toArray(function (err, docs) {
                     if (err) {
                         console.log('Error while searching document ' + search + ' in ' + collection_name + '.\n' + err)
+                        db.close()
                         reject(err)
                     }
                     db.close()
@@ -74,6 +75,7 @@ module.exports = {
                 collection.find({}).toArray(function (err, docs) {
                     if (err) {
                         console.log(err)
+                        db.close()
                         reject(err)
                     }
                     db.close()
@@ -95,6 +97,7 @@ module.exports = {
                 var result = collection.insertMany(documents, function (err, result) {
                     if (err) {
                         console.log(err)
+                        db.close()
                         reject(err)
                     }
 
@@ -119,6 +122,7 @@ module.exports = {
                 db.createCollection(collection_name, {}, function (err, result) {
                     if (err) {
                         console.log('Error while creating collection ' + collection_name + '.\n' + err)
+                        db.close()
                         reject(err)
                     }
 
@@ -142,19 +146,19 @@ module.exports = {
         return new Promise((resolve, reject) => {
 
             MongoClient.connect(url, (err, db) => {
-                db.dropCollection(collection_name, {}, function (err, result) {
-                    if (err) {
-                        console.log('Error while dropping collection ' + collection_name + '.\n' + err)
-                        reject(err)
-                    }
+                let collection = db.collection(collection_name)
 
-                    db.listCollections({
-                        name: collection_name
-                    }).toArray(function (err, names) {
-                        assert.equal(0, names.length, 'Failed dropping collection ' + collection_name)
-                        db.close()
-                        resolve()
-                    })
+                collection.drop((err, reply) => {
+                    if (err) {
+                        if (err) {
+                            console.log('Error while dropping collection: ' + err)
+                            db.close()
+                            reject(err)
+                        }
+                    }
+                    console.log('Successfully dropped collection \"' + collection_name + '\"')
+                    db.close()
+                    resolve(reply)
                 })
             })
         })
@@ -170,6 +174,7 @@ module.exports = {
             MongoClient.connect(url, (err, db) => {
                 if (err) {
                     console.log('Error while adding user ' + username + '.\n' + err)
+                    db.close()
                     reject(err)
                 }
 
@@ -193,6 +198,7 @@ module.exports = {
             MongoClient.connect(url, (err, db) => {
                 if (err) {
                     console.log('Error while adding admin.\n' + err)
+                    db.close()
                     reject(err)
                 }
 
@@ -219,6 +225,7 @@ module.exports = {
             MongoClient.connect(url, (err, db) => {
                 if (err) {
                     console.log('Error while removing user ' + username + '.\n' + err)
+                    db.close()
                     reject(err)
                 }
 
