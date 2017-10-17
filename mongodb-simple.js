@@ -9,12 +9,12 @@ module.exports = {
 
     searchDocuments: function (connection, collection_name, search) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
             MongoClient.connect(url, (err, db) => {
-                var collection = db.collection(collection_name)
+                let collection = db.collection(collection_name)
 
                 collection.find(search).toArray(function (err, docs) {
                     if (err) {
@@ -36,15 +36,40 @@ module.exports = {
         return result[0]
     },
 
+    deleteDocumentsByIds: async function (connection, collection_name, ids) {
 
-    getAllDocuments: function (connection, collection_name) {
-
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
             MongoClient.connect(url, (err, db) => {
-                var collection = db.collection(collection_name)
+                let collection = db.collection(collection_name)
+                let count = ids.length
+
+                collection.deleteMany({
+                    _id: {
+                        $in: ids.map((id) => {
+                            return ObjectId(id)
+                        })
+                    }
+                }, (err, result) => {
+                    db.close()
+                    resolve(result)
+                })
+
+            })
+        })
+
+    },
+
+    getAllDocuments: function (connection, collection_name) {
+
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
+
+        return new Promise((resolve, reject) => {
+
+            MongoClient.connect(url, (err, db) => {
+                let collection = db.collection(collection_name)
 
                 collection.find({}).toArray(function (err, docs) {
                     if (err) {
@@ -60,14 +85,14 @@ module.exports = {
 
     insertDocuments: function (connection, collection_name, documents) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
             MongoClient.connect(url, (err, db) => {
-                var collection = db.collection(collection_name)
+                let collection = db.collection(collection_name)
 
-                collection.insertMany(documents, function (err, result) {
+                var result = collection.insertMany(documents, function (err, result) {
                     if (err) {
                         console.log(err)
                         reject(err)
@@ -78,7 +103,7 @@ module.exports = {
 
                     console.log('Inserted ' + documents.length + ' documents into \"' + collection_name + '\" document collection')
                     db.close()
-                    resolve(documents)
+                    resolve(result)
                 })
             })
         })
@@ -86,7 +111,7 @@ module.exports = {
 
     createCollection: function (connection, collection_name) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
@@ -112,7 +137,7 @@ module.exports = {
 
     dropCollection: function (connection, collection_name) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
@@ -138,7 +163,7 @@ module.exports = {
 
     addUser: function (connection, username, password, roles) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
@@ -161,7 +186,7 @@ module.exports = {
 
     addAdmin: function (connection, username, password) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
@@ -187,8 +212,7 @@ module.exports = {
 
     removeUser: function (connection, username) {
 
-        var url = this._reformUri(connection.uri, connection.username, connection.password)
-        console.log(uri)
+        let url = this._reformUrl(connection.url, connection.username, connection.password)
 
         return new Promise((resolve, reject) => {
 
@@ -207,13 +231,13 @@ module.exports = {
 
     },
 
-    _reformUri(uri, username, password) {
+    _reformUrl(url, username, password) {
 
-        assert(uri, 'Connection URI must be not null.')
+        assert(url, 'Connection URL must be not null.')
 
         if (username && password)
-            return 'mongodb://' + username + ':' + password + '@' + uri + '/?authMechanism=SCRAM-SHA-1&authSource=admin'
+            return 'mongodb://' + username + ':' + password + '@' + url + '/?authMechanism=SCRAM-SHA-1&authSource=admin'
 
-        return 'mongodb://' + uri
+        return 'mongodb://' + url
     }
 }
